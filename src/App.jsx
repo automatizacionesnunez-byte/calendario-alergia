@@ -84,7 +84,7 @@ export default function App() {
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
         .then(reg => console.log('SW Registered', reg))
         .catch(err => console.error('SW Registration Failed', err));
     }
