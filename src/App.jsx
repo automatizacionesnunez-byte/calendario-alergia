@@ -37,13 +37,13 @@ import YearlyPDFViewer from './components/YearlyPDFViewer';
 
 const VAPID_PUBLIC_KEY = 'BKXMg2xUwJrRS9Pw9_ZLKA1T6vUrZ0GobAJS8z1qivf6bjsEtZz9tOsQpdfpnNQi5_BGmM63LQUjmP38Psbutk8';
 
-const TOOLS = [
-  { id: 'catarro', label: 'Catarro (Línea)', icon: Activity, color: 'text-emerald-500' },
-  { id: 'mucosidad', label: 'Mucosidad (Estornudos)', icon: Droplets, color: 'text-blue-400' },
-  { id: 'picor_ojos', label: 'Picor Ojos', icon: Cloudy, color: 'text-purple-400' },
-  { id: 'picor_garganta', label: 'Picor Garganta/Piel', icon: Wind, color: 'text-purple-600' },
-  { id: 'asma', label: 'Asma (Equis)', icon: X, color: 'text-rose-500' },
-  { id: 'asma_deporte', label: 'Asma Deporte (X+D)', icon: Zap, color: 'text-rose-600' },
+const CATEGORIES = {
+  catarro: { label: 'Catarro', icon: Activity, color: 'text-emerald-500', marker: 'line', subtypes: [{ id: 'moco_verde', label: 'Moco Verde' }, { id: 'moco_amarillo', label: 'Moco Amarillo' }] },
+  molestias: { label: 'Molestias', icon: Circle, color: 'text-blue-400', marker: 'circle', subtypes: [{ id: 'moqueo', label: 'Moqueo' }, { id: 'picor_ojos', label: 'Picor Ojos' }, { id: 'picor_piel', label: 'Picor Piel' }] },
+  asma: { label: 'Asma', icon: X, color: 'text-rose-500', marker: 'x', subtypes: [{ id: 'ahogo', label: 'Ahogo' }, { id: 'pitos', label: 'Pitos' }, { id: 'deporte', label: 'Asma Deporte (X+D)' }] }
+};
+
+const ACTION_TOOLS = [
   { id: 'inicio', label: 'Marcar Inicio', icon: CheckCircle2, color: 'text-[#0058be]' },
   { id: 'fin', label: 'Marcar Fin', icon: Trash2, color: 'text-rose-500' }
 ];
@@ -51,6 +51,7 @@ const TOOLS = [
 export default function App() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedTool, setSelectedTool] = useState(null);
+  const [selectedSubtype, setSelectedSubtype] = useState(null);
   const [symptoms, setSymptoms] = useState(loadSymptoms() || {});
   const [period, setPeriod] = useState(loadPeriod() || { start: null, end: null });
   const [showReport, setShowReport] = useState(false);
@@ -58,6 +59,20 @@ export default function App() {
   const [selectedDetailDay, setSelectedDetailDay] = useState(null);
   const [notifConfig, setNotifConfig] = useState({ active: true, time: '21:00' });
   const [selection, setSelection] = useState({ start: null, end: null, isSelecting: false });
+
+  const handleToolSelect = (toolId) => {
+    if (toolId === selectedTool && !selectedSubtype) {
+      setSelectedTool(null);
+      setSelectedSubtype(null);
+    } else {
+      setSelectedTool(toolId);
+      if (CATEGORIES[toolId]) {
+        setSelectedSubtype(CATEGORIES[toolId].subtypes[0].id);
+      } else {
+        setSelectedSubtype(null);
+      }
+    }
+  };
 
   useEffect(() => {
     saveSymptoms(symptoms);
@@ -125,18 +140,18 @@ export default function App() {
     setSymptoms(prev => {
       const dayData = prev[dateStr] || { logs: [], comment: "", tags: [] };
       const logs = dayData.logs || [];
-      const currentSymptom = logs.find(s => s.id === selectedTool);
+      const currentSymptom = logs.find(s => s.id === selectedSubtype);
       
       let updatedLogs;
       if (!currentSymptom) {
-        updatedLogs = [...logs, { id: selectedTool, intensity: 'mild' }];
+        updatedLogs = [...logs, { id: selectedSubtype, intensity: 'mild', category: selectedTool }];
       } else {
         const intensities = ['mild', 'moderate', 'strong'];
         const currentIdx = intensities.indexOf(currentSymptom.intensity);
         if (currentIdx === 2) {
-          updatedLogs = logs.filter(s => s.id !== selectedTool);
+          updatedLogs = logs.filter(s => s.id !== selectedSubtype);
         } else {
-          updatedLogs = logs.map(s => s.id === selectedTool ? { ...s, intensity: intensities[currentIdx + 1] } : s);
+          updatedLogs = logs.map(s => s.id === selectedSubtype ? { ...s, intensity: intensities[currentIdx + 1] } : s);
         }
       }
 
@@ -196,7 +211,7 @@ export default function App() {
   };
 
   const handleDayClick = (dateStr) => {
-    const isMarkerTool = ['inicio', 'fin', 'catarro', 'mucosidad', 'picor_ojos', 'picor_garganta', 'asma', 'asma_deporte'].includes(selectedTool);
+    const isMarkerTool = CATEGORIES[selectedTool] || ['inicio', 'fin'].includes(selectedTool);
     if (isMarkerTool) {
       toggleSymptom(dateStr);
     } else {
@@ -299,22 +314,56 @@ export default function App() {
           )}
 
           <section>
-            {sidebarOpen && <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 px-1">Herramientas</p>}
-            <div className="space-y-1">
-              {TOOLS.map((tool) => (
-                <button
-                  key={tool.id}
-                  onClick={() => setSelectedTool(prev => prev === tool.id ? null : tool.id)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all relative group ${
-                    selectedTool === tool.id 
-                    ? 'bg-gradient-to-r from-[#0058be] to-[#0047a0] text-white shadow-lg' 
-                    : 'hover:bg-slate-50 text-slate-600'
-                  }`}
-                >
-                  <tool.icon size={16} className={`shrink-0 ${selectedTool === tool.id ? 'text-white' : 'text-slate-400'}`} />
-                  {sidebarOpen && <span className="font-bold text-[10px] truncate uppercase">{tool.label}</span>}
-                </button>
+            {sidebarOpen && <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 px-1">Síntomas</p>}
+            <div className="space-y-2">
+              {Object.entries(CATEGORIES).map(([id, cat]) => (
+                <div key={id} className="relative">
+                  <button
+                    onClick={() => handleToolSelect(id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all relative group ${
+                      selectedTool === id 
+                      ? 'bg-gradient-to-r from-[#0058be] to-[#0047a0] text-white shadow-lg' 
+                      : 'hover:bg-slate-50 text-slate-600'
+                    }`}
+                  >
+                    <cat.icon size={16} className={`shrink-0 ${selectedTool === id ? 'text-white' : 'text-slate-400'}`} />
+                    {sidebarOpen && <span className="font-bold text-[10px] truncate uppercase">{cat.label}</span>}
+                  </button>
+                  {selectedTool === id && (
+                    <div className="mt-1 ml-4 space-y-1 animate-slide-down">
+                      {cat.subtypes.map(sub => (
+                        <button
+                          key={sub.id}
+                          onClick={() => setSelectedSubtype(sub.id)}
+                          className={`w-full text-left px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all ${
+                            selectedSubtype === sub.id 
+                            ? 'bg-blue-50 text-[#0058be] border border-blue-100 shadow-sm' 
+                            : 'text-slate-400 hover:text-slate-600'
+                          }`}
+                        >
+                          {sub.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
+              <div className="pt-2 border-t border-slate-100">
+                {ACTION_TOOLS.map(tool => (
+                  <button
+                    key={tool.id}
+                    onClick={() => handleToolSelect(tool.id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all relative group ${
+                      selectedTool === tool.id 
+                      ? 'bg-gradient-to-r from-[#0058be] to-[#0047a0] text-white shadow-lg' 
+                      : 'hover:bg-slate-50 text-slate-600'
+                    }`}
+                  >
+                    <tool.icon size={16} className={`shrink-0 ${selectedTool === tool.id ? 'text-white' : 'text-slate-400'}`} />
+                    {sidebarOpen && <span className="font-bold text-[10px] truncate uppercase">{tool.label}</span>}
+                  </button>
+                ))}
+              </div>
             </div>
           </section>
 

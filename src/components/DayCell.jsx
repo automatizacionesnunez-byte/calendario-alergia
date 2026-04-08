@@ -20,17 +20,25 @@ export default function DayCell({
   const logs = dayData?.logs || [];
   const comment = dayData?.comment || "";
   
-  const getSymptom = (type) => logs.find(s => s.id === type);
+  const getSymptomsByCategory = (cat) => logs.filter(s => s.category === cat);
+  const hasSymptom = (id) => logs.some(s => s.id === id);
   
   const renderCatarroLine = () => {
-    const sym = getSymptom('catarro');
-    if (!sym) return null;
-    const config = INTENSITY_CONFIG[sym.intensity] || INTENSITY_CONFIG.moderate;
+    const syms = getSymptomsByCategory('catarro');
+    if (syms.length === 0) return null;
+    
+    // Use highest intensity
+    const intensities = ['mild', 'moderate', 'strong'];
+    const maxSym = syms.reduce((prev, curr) => 
+      intensities.indexOf(curr.intensity) > intensities.indexOf(prev.intensity) ? curr : prev
+    );
+    
+    const config = INTENSITY_CONFIG[maxSym.intensity] || INTENSITY_CONFIG.moderate;
     
     const neighborHas = (date) => {
       const data = allSymptoms[date];
       const dayLogs = data?.logs || [];
-      return dayLogs.some(s => s.id === 'catarro');
+      return dayLogs.some(s => s.category === 'catarro');
     };
 
     const continuous = neighborHas(prevDateStr) || neighborHas(nextDateStr);
@@ -54,12 +62,38 @@ export default function DayCell({
     );
   };
 
-  const mucosidad = getSymptom('mucosidad');
-  const picorOjos = getSymptom('picor_ojos');
-  const picorGarganta = getSymptom('picor_garganta');
-  const asma = getSymptom('asma');
-  const asmaDeporte = getSymptom('asma_deporte');
-  const activeAsma = asma || asmaDeporte;
+  const renderMolestiasCircle = () => {
+    const syms = getSymptomsByCategory('molestias');
+    if (syms.length === 0) return null;
+
+    const intensities = ['mild', 'moderate', 'strong'];
+    const maxSym = syms.reduce((prev, curr) => 
+      intensities.indexOf(curr.intensity) > intensities.indexOf(prev.intensity) ? curr : prev
+    );
+    const config = INTENSITY_CONFIG[maxSym.intensity] || INTENSITY_CONFIG.moderate;
+
+    return (
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <div 
+          className="rounded-full border-[#60a5fa] border-4 transition-all duration-500"
+          style={{ 
+            width: 40 * config.scale,
+            height: 40 * config.scale,
+            opacity: config.opacity * 0.4,
+            filter: `drop-shadow(0 0 8px rgba(96, 165, 250, 0.3))`
+          }}
+        />
+      </div>
+    );
+  };
+
+  const asmaLogs = getSymptomsByCategory('asma');
+  const activeAsma = asmaLogs.length > 0 ? asmaLogs.reduce((prev, curr) => {
+    const intensities = ['mild', 'moderate', 'strong'];
+    return intensities.indexOf(curr.intensity) > intensities.indexOf(prev.intensity) ? curr : prev
+  }) : null;
+
+  const isDeporte = hasSymptom('deporte');
 
   return (
     <motion.div 
@@ -81,28 +115,29 @@ export default function DayCell({
         </div>
         
         <div className="flex flex-col gap-0.5 items-end">
-           {mucosidad && <Droplets size={12} className="text-blue-400" />}
-           {picorOjos && <Cloudy size={12} className="text-purple-400" />}
-           {picorGarganta && <Wind size={12} className="text-purple-600" />}
+           {hasSymptom('moqueo') && <Droplets size={10} className="text-blue-400" />}
+           {hasSymptom('picor_ojos') && <Cloudy size={10} className="text-purple-400" />}
+           {hasSymptom('picor_piel') && <Wind size={10} className="text-purple-600" />}
         </div>
       </div>
 
-      <div className="flex-1 w-full relative mt-2 pointer-events-none">
+      <div className="flex-1 w-full relative mt-1 pointer-events-none">
         {renderCatarroLine()}
+        {renderMolestiasCircle()}
 
         {activeAsma && (
-          <div className="absolute inset-x-0 bottom-0 top-0 flex items-center justify-center pointer-events-none z-0">
+          <div className="absolute inset-x-0 bottom-0 top-0 flex items-center justify-center pointer-events-none z-10">
              <div 
                 className="font-black text-[#ef4444] transition-all duration-700 flex items-center gap-1"
                 style={{ 
-                  fontSize: 24 * (INTENSITY_CONFIG[activeAsma.intensity]?.scale || 1),
+                  fontSize: 20 * (INTENSITY_CONFIG[activeAsma.intensity]?.scale || 1),
                   opacity: (INTENSITY_CONFIG[activeAsma.intensity]?.opacity || 0.7) * 0.9,
                   transform: `rotate(-15deg)`,
                   filter: `drop-shadow(0 4px 10px rgba(239, 68, 68, 0.3))`
                 }}
              >
                <span>X</span>
-               {asmaDeporte && <span className="text-[0.4em] mb-[0.6em] font-black underline decoration-4 underline-offset-4">D</span>}
+               {isDeporte && <span className="text-[0.4em] mb-[0.6em] font-black underline decoration-4 underline-offset-4">D</span>}
              </div>
           </div>
         )}
