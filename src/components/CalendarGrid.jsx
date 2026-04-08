@@ -37,7 +37,7 @@ export default function CalendarGrid({
 
   return (
     <div 
-      className="grid grid-cols-7 gap-6 auto-rows-fr"
+      className="grid grid-cols-7 gap-1 md:gap-2 auto-rows-fr"
       onMouseLeave={onSelectionEnd}
     >
       {calendarDays.map((day, idx) => {

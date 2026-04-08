@@ -70,24 +70,24 @@ export default function DayCell({
       onMouseUp={onMouseUp}
       onClick={() => onClick(dateStr)}
       data-is-today={currentIsToday}
-      className={`min-h-[160px] p-6 flex flex-col relative transition-all cursor-pointer rounded-[2rem] border-2 ${
-        isSelected ? 'bg-blue-50/50 border-[#0058be] ring-4 ring-[#0058be]/10' : 
-        isCurrentMonth ? 'bg-white border-slate-100 hover:border-[#0058be]/30' : 'bg-slate-50/50 border-transparent opacity-30 pointer-events-none grayscale'
-      } shadow-sm hover:shadow-md group select-none`}
+      className={`min-h-[60px] md:min-h-[80px] p-1.5 md:p-2.5 flex flex-col relative transition-all cursor-pointer rounded-lg md:rounded-2xl border ${
+        isSelected ? 'bg-blue-50/50 border-[#0058be] ring-2 ring-[#0058be]/10' : 
+        isCurrentMonth ? 'bg-white border-slate-100' : 'bg-slate-50/50 border-transparent opacity-20 pointer-events-none'
+      } shadow-sm group select-none`}
     >
       <div className="flex items-start justify-between relative z-20">
-        <div className={`text-2xl font-black tracking-tight ${currentIsToday ? 'text-[#0058be]' : 'text-slate-800'}`}>
+        <div className={`text-base md:text-xl font-black tracking-tight ${currentIsToday ? 'text-[#0058be]' : 'text-slate-800'}`}>
           {format(day, 'd')}
         </div>
         
-        <div className="flex flex-col gap-1 items-end">
-           {mucosidad && <Droplets size={18} className="text-blue-400 animate-bounce" />}
-           {picorOjos && <Cloudy size={18} className="text-purple-400" />}
-           {picorGarganta && <Wind size={18} className="text-purple-600" />}
+        <div className="flex flex-col gap-0.5 items-end">
+           {mucosidad && <Droplets size={12} className="text-blue-400" />}
+           {picorOjos && <Cloudy size={12} className="text-purple-400" />}
+           {picorGarganta && <Wind size={12} className="text-purple-600" />}
         </div>
       </div>
 
-      <div className="flex-1 w-full relative mt-4 pointer-events-none">
+      <div className="flex-1 w-full relative mt-2 pointer-events-none">
         {renderCatarroLine()}
 
         {activeAsma && (
@@ -95,7 +95,7 @@ export default function DayCell({
              <div 
                 className="font-black text-[#ef4444] transition-all duration-700 flex items-center gap-1"
                 style={{ 
-                  fontSize: 48 * (INTENSITY_CONFIG[activeAsma.intensity]?.scale || 1),
+                  fontSize: 24 * (INTENSITY_CONFIG[activeAsma.intensity]?.scale || 1),
                   opacity: (INTENSITY_CONFIG[activeAsma.intensity]?.opacity || 0.7) * 0.9,
                   transform: `rotate(-15deg)`,
                   filter: `drop-shadow(0 4px 10px rgba(239, 68, 68, 0.3))`
@@ -109,7 +109,7 @@ export default function DayCell({
 
         {comment && (
           <div className="mt-auto relative z-20 group-hover:scale-105 transition-transform">
-            <div className="text-[10px] font-black text-slate-500 line-clamp-2 bg-slate-50/90 backdrop-blur-sm py-2 px-3 rounded-xl border border-slate-100 uppercase tracking-widest shadow-sm">
+            <div className="text-[8px] font-black text-slate-500 line-clamp-1 bg-slate-50/90 backdrop-blur-sm py-1 px-2 rounded-lg border border-slate-100 uppercase tracking-widest shadow-sm">
                {comment}
             </div>
           </div>
@@ -117,13 +117,13 @@ export default function DayCell({
       </div>
 
       {isStart && (
-        <div className="absolute top-2 right-12 z-30 animate-in zoom-in duration-300">
-          <div className="text-[9px] font-black text-[#0058be] px-3 py-1 rounded-full border-2 border-[#0058be] uppercase tracking-widest bg-white shadow-lg">INICIO</div>
+        <div className="absolute top-1 right-2 z-30 animate-in zoom-in duration-300">
+          <div className="text-[7px] font-black text-[#0058be] px-2 py-0.5 rounded-full border border-[#0058be] uppercase tracking-widest bg-white shadow-lg">INI</div>
         </div>
       )}
       {isEnd && (
-        <div className="absolute top-2 right-24 z-30 animate-in zoom-in duration-300">
-          <div className="text-[9px] font-black text-rose-500 px-3 py-1 rounded-full border-2 border-rose-500 uppercase tracking-widest bg-white shadow-lg">FIN</div>
+        <div className="absolute top-1 right-8 z-30 animate-in zoom-in duration-300">
+          <div className="text-[7px] font-black text-rose-500 px-2 py-0.5 rounded-full border border-rose-500 uppercase tracking-widest bg-white shadow-lg">FIN</div>
         </div>
       )}
     </motion.div>

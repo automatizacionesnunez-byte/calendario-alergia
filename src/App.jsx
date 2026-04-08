@@ -4,6 +4,7 @@ import { es } from 'date-fns/locale';
 import { 
   ChevronLeft, 
   ChevronRight, 
+  ChevronDown,
   Calendar as CalendarIcon, 
   FileText, 
   Activity, 
@@ -232,7 +233,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex bg-slate-50 min-h-screen text-slate-800 font-outfit overflow-hidden p-4 gap-4">
+    <div className="flex flex-col md:flex-row bg-[#f8fafc] h-screen text-slate-800 font-outfit overflow-hidden p-1 md:p-2 gap-1 md:gap-2 relative">
       <AnimatePresence>
         {showReport && (
           <ReportModal symptoms={symptoms} currentMonth={currentMonth} period={period} onClose={() => setShowReport(false)} />
@@ -254,109 +255,93 @@ export default function App() {
         )}
       </AnimatePresence>
       
-      <aside className={`bg-white border border-slate-100 rounded-[2.5rem] p-6 flex flex-col gap-8 transition-all duration-500 shadow-2xl relative z-20 ${sidebarOpen ? 'w-[320px]' : 'w-24 overflow-hidden shrink-0'}`}>
-        <div className="flex items-center gap-4 px-2">
+      {/* Dynamic Sidebar */}
+      <aside className={`fixed md:relative bg-white border border-slate-100 rounded-2xl md:rounded-3xl p-3 md:p-4 flex flex-col gap-4 transition-all duration-500 shadow-xl z-50 ${sidebarOpen ? 'translate-x-0 w-[220px]' : '-translate-x-full md:translate-x-0 md:w-16 overflow-hidden'} top-1 bottom-1 left-1 md:top-auto md:bottom-auto md:left-auto md:h-full`}>
+        <div className="flex items-center gap-3 px-1">
            <div className="relative">
-              <div className="absolute -inset-1.5 bg-[#0058be] blur rounded-full animate-pulse opacity-20" />
-              <div className="relative p-3 bg-gradient-to-br from-[#0058be] to-[#0047a0] rounded-2xl shadow-lg shadow-blue-200">
-                 <CalendarIcon className="text-white w-6 h-6 shrink-0" />
+              <div className="p-2 bg-gradient-to-br from-[#0058be] to-[#0047a0] rounded-xl shadow-lg">
+                 <CalendarIcon className="text-white w-5 h-5 shrink-0" />
               </div>
            </div>
            {sidebarOpen && (
              <div className="flex flex-col animate-fade-in">
-                <h1 className="text-xl font-black tracking-tight leading-none text-[#0058be]">HealthLog</h1>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Soporte Clínico</span>
+                <h1 className="text-base font-black tracking-tight leading-none text-[#0058be]">HealthLog</h1>
+                <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Clínico</span>
              </div>
            )}
         </div>
 
-        <div className="flex-1 space-y-8 overflow-y-auto pr-1 no-scrollbar">
+        <div className="flex-1 space-y-4 overflow-y-auto pr-1 no-scrollbar">
           {sidebarOpen && (
-            <section className="space-y-4 animate-fade-in">
-              <div className="p-5 bg-gradient-to-br from-slate-50 to-white border border-slate-100 rounded-[2rem] space-y-3 relative overflow-hidden group shadow-sm">
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-                   <Activity size={48} className="text-[#0058be]" />
-                </div>
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Actividad Clínica</h3>
-                <div className="flex items-baseline gap-2">
-                  <p className="text-4xl font-black text-[#0058be]">
+            <section className="space-y-3 animate-fade-in">
+              <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl space-y-1 group shadow-sm">
+                <h3 className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Actividad</h3>
+                <div className="flex items-baseline gap-1">
+                  <p className="text-2xl font-black text-[#0058be]">
                     {Object.values(symptoms).filter(day => (day.logs?.length > 0) || day.comment || (day.tags?.length > 0)).length}
                   </p>
-                  <span className="text-slate-400 font-bold text-sm">Días</span>
+                  <span className="text-slate-400 font-bold text-[10px]">Días</span>
                 </div>
-                <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Registros en el año {currentMonth.getFullYear()}.</p>
               </div>
 
-              <div className="p-5 bg-gradient-to-br from-slate-50 to-white border border-slate-100 rounded-[2rem] space-y-3 relative overflow-hidden shadow-sm group">
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-                   <Clock size={48} className="text-[#0058be]" />
-                </div>
-                <div className="relative z-10 space-y-2">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Periodo Crítico</h3>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between group/p">
-                       <p className="text-sm font-black flex items-center gap-2 text-emerald-500">
-                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                         {period.start ? format(parseISO(period.start), 'dd MMM yyyy', { locale: es }) : 'No definido'}
-                       </p>
-                    </div>
-                    <div className="flex items-center justify-between group/p">
-                       <p className="text-sm font-black flex items-center gap-2 text-rose-500">
-                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                         {period.end ? format(parseISO(period.end), 'dd MMM yyyy', { locale: es }) : 'No definido'}
-                       </p>
-                    </div>
-                  </div>
+              <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl group shadow-sm">
+                <h3 className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Capa Crítica</h3>
+                <div className="space-y-0.5">
+                   <p className="text-[10px] font-bold text-emerald-500 truncate">
+                     {period.start ? format(parseISO(period.start), 'dd/MM/yy', { locale: es }) : 'No ini'}
+                   </p>
+                   <p className="text-[10px] font-bold text-rose-500 truncate">
+                     {period.end ? format(parseISO(period.end), 'dd/MM/yy', { locale: es }) : 'No fin'}
+                   </p>
                 </div>
               </div>
             </section>
           )}
 
           <section>
-            <p className={`text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-2 ${!sidebarOpen && 'text-center'}`}>Herramientas</p>
-            <div className="space-y-2">
+            {sidebarOpen && <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 px-1">Herramientas</p>}
+            <div className="space-y-1">
               {TOOLS.map((tool) => (
                 <button
                   key={tool.id}
                   onClick={() => setSelectedTool(prev => prev === tool.id ? null : tool.id)}
-                  className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all relative overflow-hidden group ${
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all relative group ${
                     selectedTool === tool.id 
-                    ? 'bg-gradient-to-r from-[#0058be] to-[#0047a0] text-white shadow-xl shadow-blue-200' 
+                    ? 'bg-gradient-to-r from-[#0058be] to-[#0047a0] text-white shadow-lg' 
                     : 'hover:bg-slate-50 text-slate-600'
                   }`}
                 >
-                  <tool.icon size={20} className={`shrink-0 ${selectedTool === tool.id ? 'text-white' : 'text-slate-400 group-hover:text-[#0058be]'}`} />
-                  {sidebarOpen && <span className="font-bold text-sm truncate">{tool.label}</span>}
+                  <tool.icon size={16} className={`shrink-0 ${selectedTool === tool.id ? 'text-white' : 'text-slate-400'}`} />
+                  {sidebarOpen && <span className="font-bold text-[10px] truncate uppercase">{tool.label}</span>}
                 </button>
               ))}
             </div>
           </section>
 
           {sidebarOpen && (
-            <section className="animate-fade-in pt-4 border-t border-slate-100 flex flex-col gap-3">
-               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1 px-2">Análisis</p>
+            <section className="animate-fade-in pt-3 border-t border-slate-100 flex flex-col gap-2">
                <button 
                 onClick={() => setShowReport(true)}
-                className="w-full flex items-center gap-3 px-6 py-4 bg-white border border-[#0058be]/20 text-[#0058be] rounded-2xl hover:bg-blue-50 transition-all shadow-sm text-[10px] font-black uppercase tracking-widest"
+                className="w-full flex items-center justify-center gap-2 p-3 bg-white border border-blue-100 text-[#0058be] rounded-xl hover:bg-blue-50 text-[9px] font-black uppercase"
                >
-                <CircleEllipsis size={18} />
-                Analizar Síntomas
+                <CircleEllipsis size={14} />
+                Analizar
                </button>
                <button 
                   onClick={subscribeToPush}
-                  className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl transition-all shadow-sm text-[10px] font-black uppercase tracking-widest border ${
-                    notifConfig.active ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-white border-blue-100 text-[#0058be] hover:bg-blue-50'
+                  className={`w-full flex items-center justify-center gap-2 p-3 rounded-xl border text-[9px] font-black uppercase ${
+                    notifConfig.active ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-white border-blue-100 text-[#0058be]'
                   }`}
                 >
-                  <Bell size={18} className={notifConfig.active ? 'animate-bounce' : ''} />
-                  {notifConfig.active ? 'Recordatorios Activos' : 'Activar Recordatorios'}
+                  <Bell size={14} />
+                  Recordatorios
                 </button>
                <button 
                 onClick={exportPDF}
-                className="w-full flex items-center gap-3 px-6 py-4 bg-[#0058be] text-white rounded-2xl hover:bg-[#0047a0] transition-all shadow-lg shadow-blue-100 text-[10px] font-black uppercase tracking-widest"
+                className="w-full flex items-center justify-center gap-2 p-3 bg-[#0058be] text-white rounded-xl hover:bg-[#0047a0] text-[9px] font-black uppercase shadow-md shadow-blue-100"
                >
-                <FileDown size={18} />
-                Generar PDF Médico
+                <FileDown size={14} />
+                Exportar
                </button>
             </section>
           )}
@@ -364,30 +349,35 @@ export default function App() {
 
         <button 
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-4 text-slate-400 hover:text-[#0058be] border border-slate-100 hover:bg-slate-50 rounded-2xl transition-all flex items-center justify-center bg-white"
+          className="p-3 text-slate-400 hover:text-[#0058be] border border-slate-100 hover:bg-slate-50 rounded-xl transition-all flex items-center justify-center bg-white"
         >
-          {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+          {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
         </button>
       </aside>
 
-      <main className="flex-1 min-w-0 flex flex-col gap-6 relative overflow-hidden bg-white border border-slate-100 rounded-[3rem] shadow-2xl shadow-slate-200/40">
-        <header className="px-12 py-12 flex items-center justify-between gap-6 relative z-10 bg-white">
-          <div className="w-48 invisible" aria-hidden="true" />
-          
-          <div className="flex items-center gap-6">
+      {/* Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/10 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <main className="flex-1 min-w-0 flex flex-col gap-1 md:gap-2 relative overflow-hidden bg-white border border-slate-100 rounded-2xl md:rounded-3xl shadow-lg">
+        <header className="px-4 py-2 md:px-6 md:py-3 flex items-center justify-between gap-2 bg-white relative z-10 border-b border-slate-50">
+           <div className="flex items-center gap-2 md:gap-4">
             <button 
               onClick={prevMonth} 
-              className="p-3 bg-white border border-slate-100 rounded-2xl text-[#0058be] hover:bg-blue-50 transition-all shadow-sm active:scale-90"
-              title="Mes Anterior"
+              className="p-2 bg-slate-50 border border-slate-100 rounded-lg text-[#0058be] hover:bg-blue-50"
             >
-              <ChevronLeft size={20} strokeWidth={3} />
+              <ChevronLeft size={16} strokeWidth={3} />
             </button>
             
-            <div className="flex items-center px-4 gap-2">
+            <div className="flex items-center gap-1 md:gap-2">
               <select 
                 value={currentMonth.getMonth()} 
                 onChange={(e) => setCurrentMonth(new Date(currentMonth.getFullYear(), parseInt(e.target.value), 1))}
-                className="bg-transparent text-sm font-black text-[#0058be] border-none focus:ring-0 uppercase tracking-widest cursor-pointer"
+                className="bg-transparent text-[11px] md:text-sm font-black text-[#0058be] border-none focus:ring-0 uppercase tracking-widest cursor-pointer"
               >
                 {Array.from({ length: 12 }).map((_, i) => (
                   <option key={i} value={i}>
@@ -396,31 +386,30 @@ export default function App() {
                 ))}
               </select>
               <span className="text-slate-300 font-black">/</span>
-              <span className="text-sm font-black text-slate-500">{currentMonth.getFullYear()}</span>
+              <span className="text-[11px] md:text-sm font-black text-slate-400">{currentMonth.getFullYear()}</span>
             </div>
 
             <button 
               onClick={nextMonth} 
-              className="p-3 bg-white border border-slate-100 rounded-2xl text-[#0058be] hover:bg-blue-50 transition-all shadow-sm active:scale-90"
-              title="Mes Siguiente"
+              className="p-2 bg-slate-50 border border-slate-100 rounded-lg text-[#0058be] hover:bg-blue-50"
             >
-              <ChevronRight size={20} strokeWidth={3} />
+              <ChevronRight size={16} strokeWidth={3} />
             </button>
           </div>
           
           <button 
             onClick={() => setCurrentMonth(new Date())} 
-            className="px-6 py-3 bg-white border border-slate-100 rounded-2xl text-[10px] font-black text-[#0058be] hover:bg-[#0058be] hover:text-white transition-all uppercase tracking-widest shadow-sm active:scale-95"
+            className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-[9px] font-black text-[#0058be] hover:bg-blue-50 uppercase tracking-widest shadow-sm"
           >
             Hoy
           </button>
         </header>
 
-        <div className="flex-1 overflow-hidden flex flex-col px-12 pb-12">
-          <div className="grid grid-cols-7 text-center pb-10 font-bold text-slate-400 uppercase text-[12px] tracking-[0.2em] px-4">
+        <div className="flex-1 overflow-hidden flex flex-col px-4 md:px-6 pb-2 md:pb-4">
+          <div className="grid grid-cols-7 text-center pb-2 font-bold text-slate-300 uppercase text-[8px] md:text-[9px] tracking-[0.2em]">
             {['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'].map(d => <div key={d}>{d}</div>)}
           </div>
-          <div className="flex-1 overflow-auto custom-scrollbar pr-2">
+          <div className="flex-1 overflow-auto custom-scrollbar">
             <CalendarGrid 
               currentMonth={currentMonth} 
               symptoms={symptoms} 

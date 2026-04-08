@@ -83,10 +83,10 @@ export default function DayDetailModal({ date, dayData, onSave, onClose, selecti
         animate={{ scale: 1, opacity: 1, y: 0 }}
         className="w-full max-w-xl bg-white rounded-[3rem] shadow-3xl flex flex-col overflow-hidden border border-slate-100 max-h-[90vh]"
       >
-        <header className="p-8 border-b border-slate-50 flex items-center justify-between bg-white relative z-10">
+        <header className="p-4 md:p-6 border-b border-slate-50 flex items-center justify-between bg-white relative z-10">
           <div>
-            <h3 className="text-2xl font-black text-slate-900 leading-none">Registro Clínico</h3>
-            <p className="text-sm text-[#0058be] font-black uppercase tracking-[0.2em] mt-2">
+            <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-none">Registro Clínico</h3>
+            <p className="text-[10px] md:text-sm text-[#0058be] font-black uppercase tracking-[0.2em] mt-1.5 md:mt-2">
               {isRange ? (
                 `${format(parseISO(startDate), 'd')} - ${format(parseISO(endDate), 'd')} de ${format(parseISO(startDate), 'MMMM yyyy', { locale: es })}`
               ) : (
@@ -94,12 +94,12 @@ export default function DayDetailModal({ date, dayData, onSave, onClose, selecti
               )}
             </p>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-rose-50 hover:text-rose-500 rounded-2xl transition-all group border border-slate-50 shadow-sm">
-             <X size={20} className="text-slate-400 group-hover:text-rose-500" />
+          <button onClick={onClose} className="p-2 md:p-3 hover:bg-rose-50 hover:text-rose-500 rounded-xl md:rounded-2xl transition-all border border-slate-50 shadow-sm">
+             <X size={18} className="text-slate-400" />
           </button>
         </header>
 
-        <div className="p-8 space-y-8 overflow-y-auto custom-scrollbar bg-slate-50/20">
+        <div className="p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto custom-scrollbar bg-slate-50/20">
           {/* Main Symptom Groups */}
           <section className="space-y-4">
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 px-1">Sintomatología Principal</h4>
@@ -117,21 +117,21 @@ export default function DayDetailModal({ date, dayData, onSave, onClose, selecti
                   <div key={sym.id} className="space-y-3">
                     <button
                       onClick={() => toggleSymptom(sym.id)}
-                      className={`w-full flex items-center justify-between p-5 rounded-3xl text-sm font-black transition-all border-2 ${
-                        log ? 'bg-slate-900 border-slate-900 text-white shadow-xl translate-y-[-2px]' : 'bg-white border-slate-100 text-slate-600 hover:border-[#0058be] hover:border-opacity-30'
+                      className={`w-full flex items-center justify-between p-3 md:p-4 rounded-2xl md:rounded-3xl text-xs md:text-sm font-black transition-all border-2 ${
+                        log ? 'bg-slate-900 border-slate-900 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-600 hover:border-[#0058be] hover:border-opacity-30'
                       }`}
                     >
-                      <div className="flex items-center gap-4">
-                         <div className={`p-2 rounded-xl ${log ? 'bg-[#0058be] text-white' : 'bg-slate-50 text-slate-400'}`}>
-                            <sym.icon size={20} />
+                      <div className="flex items-center gap-3 md:gap-4">
+                         <div className={`p-1.5 rounded-lg md:rounded-xl ${log ? 'bg-[#0058be] text-white' : 'bg-slate-50 text-slate-400'}`}>
+                            <sym.icon size={16} />
                          </div>
                          <span>{sym.label}</span>
                       </div>
                       {log && (
-                        <div className={`px-4 py-1.5 rounded-full text-[10px] uppercase font-black ring-4 ring-white/5 ${
+                        <div className={`px-3 py-1 rounded-full text-[8px] md:text-[10px] uppercase font-black ${
                           log.intensity === 'strong' ? 'bg-[#ef4444]' : log.intensity === 'moderate' ? 'bg-[#f59e0b]' : 'bg-[#10b981]'
                         }`}>
-                          {log.intensity === 'strong' ? 'Fuerte' : log.intensity === 'moderate' ? 'Medio' : 'Leve'}
+                          {log.intensity === 'strong' ? 'F' : log.intensity === 'moderate' ? 'M' : 'L'}
                         </div>
                       )}
                     </button>
@@ -205,19 +205,19 @@ export default function DayDetailModal({ date, dayData, onSave, onClose, selecti
           </section>
         </div>
 
-        <footer className="p-8 border-t border-slate-100 bg-white flex gap-4">
+        <footer className="p-4 md:p-6 border-t border-slate-100 bg-white flex gap-3 md:gap-4">
           <button 
             onClick={() => onSave({ logs, comment, tags })}
-            className="flex-1 py-5 bg-[#0058be] text-white rounded-2xl shadow-xl shadow-blue-200 hover:bg-[#0047a0] transition-all font-black uppercase text-xs tracking-widest flex items-center justify-center gap-3"
+            className="flex-1 py-3 md:py-4 bg-[#0058be] text-white rounded-xl md:rounded-2xl shadow-xl shadow-blue-200 hover:bg-[#0047a0] transition-all font-black uppercase text-[10px] md:text-xs tracking-widest flex items-center justify-center gap-2 md:gap-3"
           >
-            <Check size={18} strokeWidth={3} /> Guardar Cambios
+            <Check size={16} strokeWidth={3} /> Guardar
           </button>
           <button 
             onClick={() => { setComment(''); setTags([]); setLogs([]); }} 
-            className="p-5 bg-slate-50 border border-slate-100 text-slate-400 rounded-2xl hover:text-rose-500 hover:bg-rose-50 transition-all"
+            className="p-3 md:p-4 bg-slate-50 border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-rose-500 hover:bg-rose-50 transition-all"
             title="Borrar Todo"
           >
-            <RotateCcw size={20} />
+            <RotateCcw size={18} />
           </button>
         </footer>
       </motion.div>
