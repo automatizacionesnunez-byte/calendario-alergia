@@ -22,13 +22,14 @@ export default async function handler(req, res) {
 
   try {
     const endpoints = await kv.smembers('all_subscriptions');
+    const currentHour = new Date().getUTCHours();
     const results = [];
 
     for (const endpoint of endpoints) {
       const subKey = `push_sub:${endpoint}`;
       const subscription = await kv.get(subKey);
 
-      if (subscription) {
+      if (subscription && subscription.preferredHour === currentHour) {
         try {
           await webpush.sendNotification(subscription, JSON.stringify({
             title: 'Recordatorio Clínico',

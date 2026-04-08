@@ -12,11 +12,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Store the subscription in Vercel KV. 
-    // We use a set to keep unique endpoints.
-    // In a real app, you might associate this with a userId.
+    // Store the subscription in Vercel KV with metadata
     const key = `push_sub:${subscription.endpoint}`;
-    await kv.set(key, subscription);
+    await kv.set(key, {
+      ...subscription,
+      preferredHour: req.body.preferredHour || 21 // Default to 21
+    });
     
     // Also add to a list of all subscriptions for easy iteration in push-send
     await kv.sadd('all_subscriptions', subscription.endpoint);

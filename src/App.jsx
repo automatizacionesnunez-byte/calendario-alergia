@@ -107,7 +107,10 @@ export default function App() {
       const response = await fetch('/api/push-subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subscription })
+        body: JSON.stringify({ 
+          subscription,
+          preferredHour: new Date(new Date().setHours(parseInt(notifConfig.time.split(':')[0]), 0, 0, 0)).getUTCHours()
+        })
       });
 
       if (response.ok) {
@@ -369,6 +372,27 @@ export default function App() {
 
           {sidebarOpen && (
             <section className="animate-fade-in pt-3 border-t border-slate-100 flex flex-col gap-2">
+               <div className="px-1 space-y-2">
+                 <div className="flex items-center justify-between">
+                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">Hora Aviso</p>
+                   <input 
+                     type="time" 
+                     value={notifConfig.time}
+                     onChange={(e) => setNotifConfig(prev => ({ ...prev, time: e.target.value }))}
+                     className="text-[10px] font-bold text-[#0058be] bg-slate-50 border-none rounded p-1"
+                   />
+                 </div>
+                 <button 
+                    onClick={subscribeToPush}
+                    className={`w-full flex items-center justify-center gap-2 p-3 rounded-xl border text-[9px] font-black uppercase transition-all ${
+                      notifConfig.active ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-white border-blue-100 text-[#0058be]'
+                    }`}
+                  >
+                    <Bell size={14} />
+                    {notifConfig.active ? 'Recordatorios ON' : 'Activar Avisos'}
+                  </button>
+               </div>
+
                <button 
                 onClick={() => setShowReport(true)}
                 className="w-full flex items-center justify-center gap-2 p-3 bg-white border border-blue-100 text-[#0058be] rounded-xl hover:bg-blue-50 text-[9px] font-black uppercase"
@@ -376,15 +400,7 @@ export default function App() {
                 <CircleEllipsis size={14} />
                 Analizar
                </button>
-               <button 
-                  onClick={subscribeToPush}
-                  className={`w-full flex items-center justify-center gap-2 p-3 rounded-xl border text-[9px] font-black uppercase ${
-                    notifConfig.active ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-white border-blue-100 text-[#0058be]'
-                  }`}
-                >
-                  <Bell size={14} />
-                  Recordatorios
-                </button>
+               
                <button 
                 onClick={exportPDF}
                 className="w-full flex items-center justify-center gap-2 p-3 bg-[#0058be] text-white rounded-xl hover:bg-[#0047a0] text-[9px] font-black uppercase shadow-md shadow-blue-100"
