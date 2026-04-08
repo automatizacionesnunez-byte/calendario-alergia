@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+@theme {
+  --font-outfit: "Outfit", sans-serif;
+  --font-manrope: "Manrope", sans-serif;
+  --color-clinical-white: #ffffff;
+  --color-clinical-slate: #1e293b;
+  --color-clinical-blue: #0058be;
+  --color-clinical-emerald: #10b981;
+}
+
+:root {
+  --primary: #0058be;
+  --primary-dark: #0047a0;
+  --bg-main: #f8fafc;
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
+  --border-light: #f1f5f9;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-outfit);
+  background-color: var(--bg-main);
+  color: var(--color-clinical-slate);
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 40px rgba(19, 27, 46, 0.05);
+}
+
+.calendar-shadow {
+  box-shadow: 0 20px 40px rgba(19, 27, 46, 0.04);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
