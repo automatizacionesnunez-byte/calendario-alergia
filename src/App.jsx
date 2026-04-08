@@ -20,7 +20,10 @@ import {
   MessageSquare,
   CircleEllipsis,
   FileDown,
-  Sparkles
+  Sparkles,
+  Droplets,
+  Cloudy,
+  Wind
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -31,7 +34,7 @@ import ReportModal from './components/ReportModal';
 import DayDetailModal from './components/DayDetailModal';
 import YearlyPDFViewer from './components/YearlyPDFViewer';
 
-const VAPID_PUBLIC_KEY = 'BOIKxmE285tF_OjuYbG017sOobW8vIrthOqQTnlrv-6-Cdrm5fA8tK9_N5f4H7YocYH1VS73xCGal3ljofdm24g';
+const VAPID_PUBLIC_KEY = 'BKXMg2xUwJrRS9Pw9_ZLKA1T6vUrZ0GobAJS8z1qivf6bjsEtZz9tOsQpdfpnNQi5_BGmM63LQUjmP38Psbutk8';
 
 const TOOLS = [
   { id: 'catarro', label: 'Catarro (Línea)', icon: Activity, color: 'text-emerald-500' },
