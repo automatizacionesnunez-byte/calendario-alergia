@@ -1,5 +1,0 @@
-VAPID_PUBLIC_KEY=BKXMg2xUwJrRS9Pw9_ZLKA1T6vUrZ0GobAJS8z1qivf6bjsEtZz9tOsQpdfpnNQi5_BGmM63LQUjmP38Psbutk8
-VAPID_PRIVATE_KEY=E3AFPVGaGQXKBUvZ8xPhEfb-kh1u8WUJ7LmPZ3yOMcs
-
-KV_URL=(Vincular Vercel KV en el Dashboard)
-OLLAMA_HOST=(Configurado por defecto en el backend)
